@@ -525,7 +525,7 @@
                     */
                     switch (proxyType) {
                         case 'Nopbreak':
-                            encodingsM3u8Response = await realFetch('cors.gloft.workers.dev/?https://nopbreak.ru/orange/gay/channel/' + CurrentChannelName);
+                            encodingsM3u8Response = await realFetch('https://cors.gloft.workers.dev/?https://nopbreak.ru/orange/gay/channel/' + CurrentChannelName);
                             console.log('Nopbreak');
                             break;
                         case 'TTV LOL':
