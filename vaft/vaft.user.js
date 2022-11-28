@@ -1,16 +1,16 @@
 // ==UserScript==
 // @name         TwitchAdSolutions (vaft)
-// @namespace    https://github.com/pixeltris/TwitchAdSolutions
+// @namespace    https://github.com/GloftOfficial/TwitchAdSolutions
 // @version      5.5.1
 // @description  Multiple solutions for blocking Twitch ads (vaft)
-// @updateURL    https://github.com/pixeltris/TwitchAdSolutions/raw/master/vaft/vaft.user.js
-// @downloadURL  https://github.com/pixeltris/TwitchAdSolutions/raw/master/vaft/vaft.user.js
+// @updateURL    https://github.com/GloftOfficial/TwitchAdSolutions/raw/master/vaft/vaft.user.js
+// @downloadURL  https://github.com/GloftOfficial/TwitchAdSolutions/raw/master/vaft/vaft.user.js
 // @author       https://github.com/cleanlock/VideoAdBlockForTwitch#credits
 // @match        *://*.twitch.tv/*
 // @run-at       document-start
 // @grant        none
 // ==/UserScript==
-// This code is directly copied from https://github.com/cleanlock/VideoAdBlockForTwitch (only change is whitespace is removed for the ublock origin script - also indented)
+// This code is directly copied from https://github.com/cleanlock/VideoAdBlockForTwitch
 (function() {
     'use strict';
     //This stops Twitch from pausing the player when in another tab and an ad shows.
@@ -90,7 +90,7 @@
     var TwitchAdblockSettings = {
         BannerVisible: true,
         ForcedQuality: null,
-        ProxyType: null,
+        ProxyType: 'Nopbreak',
         ProxyQuality: null,
     };
     var twitchMainWorker = null;
@@ -520,15 +520,25 @@
                     var proxyType = TwitchAdblockSettings.ProxyType ? TwitchAdblockSettings.ProxyType : DefaultProxyType;
                     var encodingsM3u8Response = null;
                     /*var tempUrl = stripUnusedParams(MainUrlByUrl[url]);
-                    const match = /(hls|vod)\/(.+?)$/gim.exec(tempUrl);*/
+                    const match = /(hls|vod)\/(.+?)$/gim.exec(tempUrl);
+                    https://enigmatic-earth-78706.herokuapp.com/  , {headers: {'Origin': null}}
+                    */
                     switch (proxyType) {
+                        case 'Nopbreak':
+                            encodingsM3u8Response = await realFetch('https://cors-anywhere.azm.workers.dev/https://nopbreak.ru/orange/gay/channel/' + CurrentChannelName);
+                            console.log('Nopbreak');
+                            break;
                         case 'TTV LOL':
                             encodingsM3u8Response = await realFetch('https://api.ttv.lol/playlist/' + CurrentChannelName + '.m3u8%3Fallow_source%3Dtrue'/* + encodeURIComponent(match[2])*/, {headers: {'X-Donate-To': 'https://ttv.lol/donate'}});
+                            console.log('TTV LOL');
                             break;
-                        /*case 'Purple Adblock':// Broken...
-                            encodingsM3u8Response = await realFetch('https://eu1.jupter.ga/channel/' + CurrentChannelName);*/
-                        case 'Falan':// https://greasyfork.org/en/scripts/425139-twitch-ad-fix/code
-                            encodingsM3u8Response = await realFetch(atob('aHR0cHM6Ly9qaWdnbGUuYmV5cGF6YXJpZ3VydXN1LndvcmtlcnMuZGV2') + '/hls/' + CurrentChannelName + '.m3u8%3Fallow_source%3Dtrue'/* + encodeURIComponent(match[2])*/);
+                        case 'Purple':
+                            encodingsM3u8Response = await realFetch('https://eu1.jupter.ga/channel/' + CurrentChannelName);
+                            console.log('Purple');
+                            break;
+                        case 'Purple2':
+                            encodingsM3u8Response = await realFetch('https://eu2.jupter.ga/channel/' + CurrentChannelName);
+                            console.log('Purple2');
                             break;
                     }
                     if (encodingsM3u8Response && encodingsM3u8Response.status === 200) {
