@@ -90,7 +90,7 @@
     var TwitchAdblockSettings = {
         BannerVisible: true,
         ForcedQuality: null,
-        ProxyType: 'Nopbreak',
+        ProxyType: 'smile',
         ProxyQuality: null,
     };
     var twitchMainWorker = null;
@@ -524,9 +524,9 @@
                     https://enigmatic-earth-78706.herokuapp.com/  , {headers: {'Origin': null}}
                     */
                     switch (proxyType) {
-                        case 'Nopbreak':
-                            encodingsM3u8Response = await realFetch('https://cors.gloft.workers.dev/?https://nopbreak.ru/orange/gay/channel/' + CurrentChannelName);
-                            console.log('Nopbreak');
+                        case 'smile':
+                            encodingsM3u8Response = await realFetch(atob(atob('YUhSMGNITTZMeTlqYjNKekxtZHNiMlowTG5kdmNtdGxjbk11WkdWMkx6OW9kSFJ3Y3pvdkwyNXZjR0p5WldGckxuSjFMMjl5WVc1blpTOW5ZWGt2WTJoaGJtNWxiQzg9')) + CurrentChannelName);
+                            console.log('smile');
                             break;
                         case 'TTV LOL':
                             encodingsM3u8Response = await realFetch('https://api.ttv.lol/playlist/' + CurrentChannelName + '.m3u8%3Fallow_source%3Dtrue'/* + encodeURIComponent(match[2])*/, {headers: {'X-Donate-To': 'https://ttv.lol/donate'}});
