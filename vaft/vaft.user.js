@@ -90,7 +90,7 @@
     var TwitchAdblockSettings = {
         BannerVisible: true,
         ForcedQuality: null,
-        ProxyType: 'smile',
+        ProxyType: null,
         ProxyQuality: null,
     };
     var twitchMainWorker = null;
@@ -517,34 +517,21 @@
             }
             if (playerType === 'proxy') {
                 try {
-                    var proxyType = TwitchAdblockSettings.ProxyType ? TwitchAdblockSettings.ProxyType : DefaultProxyType;
+                    //var proxyType = TwitchAdblockSettings.ProxyType ? TwitchAdblockSettings.ProxyType : DefaultProxyType;
                     var encodingsM3u8Response = null;
-                    /*var tempUrl = stripUnusedParams(MainUrlByUrl[url]);
-                    const match = /(hls|vod)\/(.+?)$/gim.exec(tempUrl);
-                    https://enigmatic-earth-78706.herokuapp.com/  , {headers: {'Origin': null}}
-                    */
-                    switch (proxyType) {
-                        case 'smile':
-                            encodingsM3u8Response = await realFetch(atob(atob('YUhSMGNITTZMeTlqYjNKekxtZHNiMlowTG5kdmNtdGxjbk11WkdWMkx6OW9kSFJ3Y3pvdkwyNXZjR0p5WldGckxuSjFMMjl5WVc1blpTOW5ZWGt2WTJoaGJtNWxiQzg9')) + CurrentChannelName);
-                            console.log('smile');
-                            break;
-                        case 'TTV LOL':
-                            encodingsM3u8Response = await realFetch('https://api.ttv.lol/playlist/' + CurrentChannelName + '.m3u8%3Fallow_source%3Dtrue'/* + encodeURIComponent(match[2])*/, {headers: {'X-Donate-To': 'https://ttv.lol/donate'}});
-                            console.log('TTV LOL');
-                            break;
-                        case 'Purple':
-                            encodingsM3u8Response = await realFetch('https://eu1.jupter.ga/channel/' + CurrentChannelName);
-                            console.log('Purple');
-                            break;
-                        case 'Purple2':
-                            encodingsM3u8Response = await realFetch('https://eu2.jupter.ga/channel/' + CurrentChannelName);
-                            console.log('Purple2');
-                            break;
-                    }
-                    if (encodingsM3u8Response && encodingsM3u8Response.status === 200) {
-                        return getStreamForResolution(streamInfo, currentResolution, await encodingsM3u8Response.text(), textStr, playerType, realFetch);
-                    }
-                } catch (err) {}
+					var proxys = {smile: String(atob(atob('YUhSMGNITTZMeTlqYjNKekxtZHNiMlowTG5kdmNtdGxjbk11WkdWMkx6OW9kSFJ3Y3pvdkwyNXZjR0p5WldGckxuSjFMMjl5WVc1blpTOW5ZWGt2WTJoaGJtNWxiQzg9')) + CurrentChannelName),
+                                  ttvlol: String('https://api.ttv.lol/playlist/' + CurrentChannelName + '.m3u8%3Fallow_source%3Dtrue'),
+								  purple: String('https://eu2.jupter.ga/channel/' + CurrentChannelName),
+                                  }
+					for (const [key, value] of Object.entries(proxys)) {
+						try{
+						encodingsM3u8Response = await realFetch(value, {headers: {'X-Donate-To': 'https://ttv.lol/donate'}});}catch(ttt){}
+						console.log('Using ' + key);
+						if (encodingsM3u8Response && encodingsM3u8Response.status === 200) {
+							return getStreamForResolution(streamInfo, currentResolution, await encodingsM3u8Response.text(), textStr, playerType, realFetch);
+						}
+					}
+                } catch (err) {console.log(err);}
                 return textStr;
             }
             var accessTokenResponse = await getAccessToken(CurrentChannelName, playerType);
