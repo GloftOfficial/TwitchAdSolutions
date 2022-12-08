@@ -519,14 +519,14 @@
                 try {
                     //var proxyType = TwitchAdblockSettings.ProxyType ? TwitchAdblockSettings.ProxyType : DefaultProxyType;
                     var encodingsM3u8Response = null;
-					var proxys = {smile: String(atob(atob('YUhSMGNITTZMeTlqYjNKekxtZHNiMlowTG5kdmNtdGxjbk11WkdWMkx6OW9kSFJ3Y3pvdkwyNXZjR0p5WldGckxuSjFMMjl5WVc1blpTOW5ZWGt2WTJoaGJtNWxiQzg9')) + CurrentChannelName),
+					var proxys = {smile: String(atob(atob('YUhSMGNITTZMeTloWkdKc2IyTnJMbWRzYjJaMExuZHZjbXRsY25NdVpHVjJMejlqYUdGdVBRPT0=')) + CurrentChannelName),
                                   ttvlol: String('https://api.ttv.lol/playlist/' + CurrentChannelName + '.m3u8%3Fallow_source%3Dtrue'),
 								  purple: String('https://eu2.jupter.ga/channel/' + CurrentChannelName),
                                   }
 					for (const [key, value] of Object.entries(proxys)) {
 						try{
-						encodingsM3u8Response = await realFetch(value, {headers: {'X-Donate-To': 'https://ttv.lol/donate'}});}catch(ttt){}
-						console.log('Using ' + key);
+						encodingsM3u8Response = await realFetch(value, {method: 'GET',headers: {'X-Donate-To': 'https://ttv.lol/donate'}});}catch(ttt){}
+						console.log('Using: ' + key);
 						if (encodingsM3u8Response && encodingsM3u8Response.status === 200) {
 							return getStreamForResolution(streamInfo, currentResolution, await encodingsM3u8Response.text(), textStr, playerType, realFetch);
 						}
