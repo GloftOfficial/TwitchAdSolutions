@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TwitchAdSolutions (vaft)
 // @namespace    https://github.com/GloftOfficial/TwitchAdSolutions
-// @version      5.5.2
+// @version      5.6
 // @description  Multiple solutions for blocking Twitch ads (vaft)
 // @updateURL    https://github.com/GloftOfficial/TwitchAdSolutions/raw/master/vaft/vaft.user.js
 // @downloadURL  https://github.com/GloftOfficial/TwitchAdSolutions/raw/master/vaft/vaft.user.js
@@ -70,9 +70,9 @@
         scope.ClientVersion = 'null';
         scope.ClientSession = 'null';
         //scope.PlayerType1 = 'site'; //Source - NOTE: This is unused as it's implicitly used by the website iself
-        scope.PlayerType2 = 'embed'; //Source
-        scope.PlayerType3 = 'proxy'; //Source
-        scope.PlayerType4 = 'thunderdome'; //480p
+        scope.PlayerType2 = 'proxy';
+        scope.PlayerType3 = 'proxy'; 
+        scope.PlayerType4 = 'proxy';
         scope.CurrentChannelName = null;
         scope.UsherParams = null;
         scope.WasShowingAd = false;
@@ -519,19 +519,13 @@
                 try {
                     //var proxyType = TwitchAdblockSettings.ProxyType ? TwitchAdblockSettings.ProxyType : DefaultProxyType;
                     var encodingsM3u8Response = null;
-					var proxys = {smile: String(atob(atob('YUhSMGNITTZMeTloWkdKc2IyTnJMbWRzYjJaMExuZHZjbXRsY25NdVpHVjJMejlqYUdGdVBRPT0=')) + CurrentChannelName),
-                                  ttvlol: String('https://api.ttv.lol/playlist/' + CurrentChannelName + '.m3u8%3Fallow_source%3Dtrue'),
-								  purple: String('https://eu2.jupter.ga/channel/' + CurrentChannelName),
-                                  }
-					for (const [key, value] of Object.entries(proxys)) {
-						try{
-						encodingsM3u8Response = await realFetch(value, {method: 'GET',headers: {'X-Donate-To': 'https://ttv.lol/donate'}});}catch(ttt){}
-						console.log('Using: ' + key);
-						if (encodingsM3u8Response && encodingsM3u8Response.status === 200) {
-							return getStreamForResolution(streamInfo, currentResolution, await encodingsM3u8Response.text(), textStr, playerType, realFetch);
-						}
-					}
-                } catch (err) {console.log(err);}
+					          try{
+						          encodingsM3u8Response = await realFetch(String(atob(atob('YUhSMGNITTZMeTkyWVdaMExtZHNiMlowTG5kdmNtdGxjbk11WkdWMkx6OWphR0Z1UFE9PQ==')) + CurrentChannelName), {method: 'GET'});
+                    }catch(ttt){}
+						        if (encodingsM3u8Response && encodingsM3u8Response.status === 200) {
+                      return getStreamForResolution(streamInfo, currentResolution, await encodingsM3u8Response.text(), textStr, playerType, realFetch);
+						        }
+                }catch (err) {console.log(err);}
                 return textStr;
             }
             var accessTokenResponse = await getAccessToken(CurrentChannelName, playerType);
