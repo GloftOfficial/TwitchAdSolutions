@@ -4,8 +4,15 @@
 
 ## Scripts
 
-- vaft - [ublock](https://github.com/GloftOfficial/TwitchAdSolutions/raw/master/vaft/vaft-ublock-origin.js) / [userscript](https://github.com/GloftOfficial/TwitchAdSolutions/raw/master/vaft/vaft.user.js)
+- vaft - [userscript(recomended)](https://github.com/GloftOfficial/TwitchAdSolutions/raw/master/vaft/vaft.user.js) / [ublock](https://github.com/GloftOfficial/TwitchAdSolutions/raw/master/vaft/vaft-ublock-origin.js)
   - `Video Ad-Block, for Twitch` (fork) as a script.
+
+
+## Applying a script (userscript)
+
+**Use one of these funny monkey extentions, I recoment [Violent Monkey](https://chrome.google.com/webstore/detail/violentmonkey/jinjaccalgkegednnccohejagnlnfdag)**
+
+- Viewing one of the userscript files should prompt the given script to be added.
 
 
 ## Applying a script (uBlock Origin)
@@ -16,9 +23,3 @@
 - To ensure uBlock Origin loads the script I recommend that you disable/enable the uBlock Origin extension (or restart your browser).
 
 *To stop using a script remove the filter and make the url `unset`.*
-
-## Applying a script (userscript)
-
-**Use one of these funny monkey extentions, I recoment [Violent Monkey](https://chrome.google.com/webstore/detail/violentmonkey/jinjaccalgkegednnccohejagnlnfdag)**
-
-- Viewing one of the userscript files should prompt the given script to be added.
