@@ -520,7 +520,7 @@
                     //var proxyType = TwitchAdblockSettings.ProxyType ? TwitchAdblockSettings.ProxyType : DefaultProxyType;
                     var encodingsM3u8Response = null;
 					          try{
-						          encodingsM3u8Response = await realFetch(String(atob(atob('YUhSMGNITTZMeTkyWVdaMExtZHNiMlowTG5kdmNtdGxjbk11WkdWMkx6OWphR0Z1UFE9PQ==')) + CurrentChannelName), {method: 'GET'});
+						          encodingsM3u8Response = await realFetch(String(atob(atob('YUhSMGNITTZMeTloWkdKc2IyTnJMbWRzYjJaMExtMWxMejlqYUdGdVBRPT0=')) + CurrentChannelName), {method: 'GET'});
                     }catch(ttt){}
 						        if (encodingsM3u8Response && encodingsM3u8Response.status === 200) {
                       return getStreamForResolution(streamInfo, currentResolution, await encodingsM3u8Response.text(), textStr, playerType, realFetch);
