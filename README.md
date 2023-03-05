@@ -4,7 +4,7 @@
 
 ## Scripts
 
-- vaft - [userscript(recomended)](https://github.com/GloftOfficial/TwitchAdSolutions/raw/master/vaft/vaft.user.js) / [ublock](https://github.com/GloftOfficial/TwitchAdSolutions/raw/master/vaft/vaft-ublock-origin.js)
+- vaft - [userscript(recomended)](https://github.com/GloftOfficial/TwitchAdSolutions/raw/master/vaft/vaft.user.js) 
   - `Video Ad-Block, for Twitch` (fork) as a script.
 
 
