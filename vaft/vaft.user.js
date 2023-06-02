@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TwitchAdSolutions (vaft)
 // @namespace    https://github.com/GloftOfficial/TwitchAdSolutions
-// @version      5.6
+// @version      5.8.3
 // @description  Multiple solutions for blocking Twitch ads (vaft)
 // @updateURL    https://github.com/GloftOfficial/TwitchAdSolutions/raw/master/vaft/vaft.user.js
 // @downloadURL  https://github.com/GloftOfficial/TwitchAdSolutions/raw/master/vaft/vaft.user.js
@@ -10,7 +10,6 @@
 // @run-at       document-start
 // @grant        none
 // ==/UserScript==
-// This code is directly copied from https://github.com/cleanlock/VideoAdBlockForTwitch
 (function() {
     'use strict';
     //This stops Twitch from pausing the player when in another tab and an ad shows.
@@ -71,8 +70,8 @@
         scope.ClientSession = 'null';
         //scope.PlayerType1 = 'site'; //Source - NOTE: This is unused as it's implicitly used by the website iself
         scope.PlayerType2 = 'proxy';
-        scope.PlayerType3 = 'proxy'; 
-        scope.PlayerType4 = 'proxy';
+        scope.PlayerType3 = 'autoplay'; 
+        scope.PlayerType4 = 'embed'; 
         scope.CurrentChannelName = null;
         scope.UsherParams = null;
         scope.WasShowingAd = false;
@@ -85,6 +84,8 @@
         scope.DefaultProxyType = null;
         scope.DefaultForcedQuality = null;
         scope.DefaultProxyQuality = null;
+        scope.ClientIntegrityHeader = null;
+        scope.AuthorizationHeader = null;
     }
     declareOptions(window);
     var TwitchAdblockSettings = {
@@ -134,6 +135,10 @@
                         ClientID = e.data.value;
                     } else if (e.data.key == 'UpdateDeviceId') {
                         GQLDeviceID = e.data.value;
+                    } else if (e.data.key == 'UpdateClientIntegrityHeader') {
+                        ClientIntegrityHeader = e.data.value;
+                    } else if (e.data.key == 'UpdateAuthorizationHeader') {
+                        AuthorizationHeader = e.data.value;
                     }
                 });
                 hookWorkerFetch();
@@ -149,7 +154,7 @@
                     if (adBlockDiv == null) {
                         adBlockDiv = getAdBlockDiv();
                     }
-                    adBlockDiv.P.textContent = 'Blocking ads...';
+                    adBlockDiv.P.textContent = 'Blocking ads';
                     adBlockDiv.style.display = 'block';
                 } else if (e.data.key == 'HideAdBlockBanner') {
                     if (adBlockDiv == null) {
@@ -161,9 +166,9 @@
                 } else if (e.data.key == 'ForceChangeQuality') {
                     //This is used to fix the bug where the video would freeze.
                     try {
-                        if (navigator.userAgent.toLowerCase().indexOf('firefox') == -1) {
+                        //if (navigator.userAgent.toLowerCase().indexOf('firefox') == -1) {
                             return;
-                        }
+                        //}
                         var autoQuality = doTwitchPlayerTask(false, false, false, true, false);
                         var currentQuality = doTwitchPlayerTask(false, true, false, false, false);
                         if (IsPlayerAutoQuality == null) {
@@ -172,8 +177,8 @@
                         if (OriginalVideoPlayerQuality == null) {
                             OriginalVideoPlayerQuality = currentQuality;
                         }
-                        if (!currentQuality.includes('480') || e.data.value != null) {
-                            if (!OriginalVideoPlayerQuality.includes('480')) {
+                        if (!currentQuality.includes('360') || e.data.value != null) {
+                            if (!OriginalVideoPlayerQuality.includes('360')) {
                                 var settingsMenu = document.querySelector('div[data-a-target="player-settings-menu"]');
                                 if (settingsMenu == null) {
                                     var settingsCog = document.querySelector('button[data-a-target="player-settings-button"]');
@@ -185,7 +190,7 @@
                                         }
                                         var lowQuality = document.querySelectorAll('input[data-a-target="tw-radio"');
                                         if (lowQuality) {
-                                            var qualityToSelect = lowQuality.length - 3;
+                                            var qualityToSelect = lowQuality.length - 2;
                                             if (e.data.value != null) {
                                                 if (e.data.value.includes('original')) {
                                                     e.data.value = OriginalVideoPlayerQuality;
@@ -232,6 +237,7 @@
                                             }
                                             var currentQualityLS = window.localStorage.getItem('video-quality');
                                             lowQuality[qualityToSelect].click();
+                                            settingsCog.click();
                                             window.localStorage.setItem('video-quality', currentQualityLS);
                                             if (e.data.value != null) {
                                                 OriginalVideoPlayerQuality = null;
@@ -289,9 +295,9 @@
                             if (weaverText.includes(AdSignifier)) {
                                 weaverText = await processM3U8(url, responseText, realFetch, PlayerType3);
                             }
-                            if (weaverText.includes(AdSignifier)) {
-                                weaverText = await processM3U8(url, responseText, realFetch, PlayerType4);
-                            }
+                            //if (weaverText.includes(AdSignifier)) {
+                            //    weaverText = await processM3U8(url, responseText, realFetch, PlayerType4);
+                            //}
                             resolve(new Response(weaverText));
                         };
                         var send = function() {
@@ -643,7 +649,7 @@
     }
     function getAccessToken(channelName, playerType, realFetch) {
         var body = null;
-        var templateQuery = 'query PlaybackAccessToken_Template($login: String!, $isLive: Boolean!, $vodID: ID!, $isVod: Boolean!, $playerType: String!) {  streamPlaybackAccessToken(channelName: $login, params: {platform: "web", playerBackend: "mediaplayer", playerType: $playerType}) @include(if: $isLive) {    value    signature    __typename  }  videoPlaybackAccessToken(id: $vodID, params: {platform: "web", playerBackend: "mediaplayer", playerType: $playerType}) @include(if: $isVod) {    value    signature    __typename  }}';
+        var templateQuery = 'query PlaybackAccessToken_Template($login: String!, $isLive: Boolean!, $vodID: ID!, $isVod: Boolean!, $playerType: String!) {  streamPlaybackAccessToken(channelName: $login, params: {platform: "ios", playerBackend: "mediaplayer", playerType: $playerType}) @include(if: $isLive) {    value    signature    __typename  }  videoPlaybackAccessToken(id: $vodID, params: {platform: "ios", playerBackend: "mediaplayer", playerType: $playerType}) @include(if: $isVod) {    value    signature    __typename  }}';
         body = {
             operationName: 'PlaybackAccessToken_Template',
             query: templateQuery,
@@ -658,6 +664,10 @@
         return gqlRequest(body, realFetch);
     }
     function gqlRequest(body, realFetch) {
+        if (ClientIntegrityHeader == null) {
+            console.warn('ClientIntegrityHeader is null');
+            //throw 'ClientIntegrityHeader is null';
+        }
         var fetchFunc = realFetch ? realFetch : fetch;
         if (!GQLDeviceID) {
             var dcharacters = 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -671,10 +681,12 @@
             body: JSON.stringify(body),
             headers: {
                 'Client-ID': ClientID,
+                'Client-Integrity': ClientIntegrityHeader,
                 'Device-ID': GQLDeviceID,
                 'X-Device-Id': GQLDeviceID,
                 'Client-Version': ClientVersion,
-                'Client-Session-Id': ClientSession
+                'Client-Session-Id': ClientSession,
+                'Authorization': AuthorizationHeader
             }
         });
     }
@@ -849,6 +861,18 @@
                                 value: ClientID
                             });
                         }
+                        //Client integrity header
+                        ClientIntegrityHeader = init.headers['Client-Integrity'];
+                        twitchMainWorker.postMessage({
+                            key: 'UpdateClientIntegrityHeader',
+                            value: init.headers['Client-Integrity']
+                        });
+                        //Authorization header
+                        AuthorizationHeader = init.headers['Authorization'];
+                        twitchMainWorker.postMessage({
+                            key: 'UpdateAuthorizationHeader',
+                            value: init.headers['Authorization']
+                        });
                     }
                     //To prevent pause/resume loop for mid-rolls.
                     if (url.includes('gql') && init && typeof init.body === 'string' && init.body.includes('PlaybackAccessToken') && init.body.includes('picture-by-picture')) {
