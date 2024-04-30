@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TwitchAdSolutions (vaft)
 // @namespace    https://github.com/GloftOfficial/TwitchAdSolutions
-// @version      5.8.3
+// @version      6.0.0
 // @description  Multiple solutions for blocking Twitch ads (vaft)
 // @updateURL    https://github.com/GloftOfficial/TwitchAdSolutions/raw/master/vaft/vaft.user.js
 // @downloadURL  https://github.com/GloftOfficial/TwitchAdSolutions/raw/master/vaft/vaft.user.js
@@ -285,7 +285,7 @@
         var realFetch = fetch;
         fetch = async function(url, options) {
             if (typeof url === 'string') {
-                if (url.includes('video-weaver')) {
+                if (url.endsWith('m3u8')) {
                     return new Promise(function(resolve, reject) {
                         var processAfter = async function(response) {
                             //Here we check the m3u8 for any ads and also try fallback player types if needed.

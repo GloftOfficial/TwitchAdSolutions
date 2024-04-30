@@ -274,7 +274,7 @@ twitch-videoad.js text/javascript
         var realFetch = fetch;
         fetch = async function(url, options) {
             if (typeof url === 'string') {
-                if (url.includes('video-weaver')) {
+                if (url.endsWith('m3u8')) {
                     return new Promise(function(resolve, reject) {
                         var processAfter = async function(response) {
                             //Here we check the m3u8 for any ads and also try fallback player types if needed.
