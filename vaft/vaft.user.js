@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         TwitchAdSolutions (vaft)
-// @namespace    https://github.com/pixeltris/TwitchAdSolutions
-// @version      6.1.0
+// @namespace    https://github.com/GloftOfficial/TwitchAdSolutions
+// @version      7.0.0
 // @description  Multiple solutions for blocking Twitch ads (vaft)
-// @updateURL    https://github.com/pixeltris/TwitchAdSolutions/raw/master/vaft/vaft.user.js
-// @downloadURL  https://github.com/pixeltris/TwitchAdSolutions/raw/master/vaft/vaft.user.js
+// @updateURL    https://github.com/GloftOfficial/TwitchAdSolutions/raw/master/vaft/vaft.user.js
+// @downloadURL  https://github.com/GloftOfficial/TwitchAdSolutions/raw/master/vaft/vaft.user.js
 // @author       https://github.com/cleanlock/VideoAdBlockForTwitch#credits
 // @match        *://*.twitch.tv/*
 // @run-at       document-start
@@ -60,9 +60,9 @@
         scope.ClientID = 'kimne78kx3ncx6brgo4mv6wki5h1ko';
         scope.ClientVersion = 'null';
         scope.ClientSession = 'null';
-        scope.PlayerType2 = 'proxy'; //Source
-        scope.PlayerType3 = 'embed'; //Source
-        scope.PlayerType4 = 'autoplay'; //360p
+        scope.PlayerType2 = 'proxy'; 
+        scope.PlayerType3 = 'embed'; 
+        scope.PlayerType4 = 'site'; 
         scope.CurrentChannelName = null;
         scope.UsherParams = null;
         scope.WasShowingAd = false;
@@ -82,10 +82,13 @@
     var IsPlayerAutoQuality = null;
     const oldWorker = window.Worker;
     window.Worker = class Worker extends oldWorker {
-        constructor(twitchBlobUrl) {
-            var jsURL = getWasmWorkerUrl(twitchBlobUrl);
-            if (typeof jsURL !== 'string') {
-                super(twitchBlobUrl);
+        constructor(twitchBlobUrl, options) {
+            var isTwitchWorker = false;
+            try {
+                isTwitchWorker = new URL(twitchBlobUrl).origin.endsWith('.twitch.tv');
+            } catch {}
+            if (!isTwitchWorker) {
+                super(twitchBlobUrl, options);
                 return;
             }
             var newBlobStr = `
@@ -100,28 +103,32 @@
                 ${adRecordgqlPacket.toString()}
                 ${tryNotifyTwitch.toString()}
                 ${parseAttributes.toString()}
-                declareOptions(self);
-                self.addEventListener('message', function(e) {
-                    if (e.data.key == 'UpdateIsSquadStream') {
-                        IsSquadStream = e.data.value;
-                    } else if (e.data.key == 'UpdateClientVersion') {
-                        ClientVersion = e.data.value;
-                    } else if (e.data.key == 'UpdateClientSession') {
-                        ClientSession = e.data.value;
-                    } else if (e.data.key == 'UpdateClientId') {
-                        ClientID = e.data.value;
-                    } else if (e.data.key == 'UpdateDeviceId') {
-                        GQLDeviceID = e.data.value;
-                    } else if (e.data.key == 'UpdateClientIntegrityHeader') {
-                        ClientIntegrityHeader = e.data.value;
-                    } else if (e.data.key == 'UpdateAuthorizationHeader') {
-                        AuthorizationHeader = e.data.value;
-                    }
-                });
-                hookWorkerFetch();
-                importScripts('${jsURL}');
+                ${getWasmWorkerUrl.toString()}
+                var workerUrl = getWasmWorkerUrl('${twitchBlobUrl.replaceAll("'", "%27")}');
+                if (workerUrl && workerUrl.includes('assets.twitch.tv/assets/amazon-ivs-wasmworker')) {
+                    declareOptions(self);
+                    self.addEventListener('message', function(e) {
+                        if (e.data.key == 'UpdateIsSquadStream') {
+                            IsSquadStream = e.data.value;
+                        } else if (e.data.key == 'UpdateClientVersion') {
+                            ClientVersion = e.data.value;
+                        } else if (e.data.key == 'UpdateClientSession') {
+                            ClientSession = e.data.value;
+                        } else if (e.data.key == 'UpdateClientId') {
+                            ClientID = e.data.value;
+                        } else if (e.data.key == 'UpdateDeviceId') {
+                            GQLDeviceID = e.data.value;
+                        } else if (e.data.key == 'UpdateClientIntegrityHeader') {
+                            ClientIntegrityHeader = e.data.value;
+                        } else if (e.data.key == 'UpdateAuthorizationHeader') {
+                            AuthorizationHeader = e.data.value;
+                        }
+                    });
+                    hookWorkerFetch();
+                    importScripts(workerUrl);
+                }
             `;
-            super(URL.createObjectURL(new Blob([newBlobStr])));
+            super(URL.createObjectURL(new Blob([newBlobStr])), options);
             twitchWorkers.push(this);
             this.onmessage = function(e) {
                 if (e.data.key == 'ShowAdBlockBanner') {
@@ -251,11 +258,12 @@
     function getWasmWorkerUrl(twitchBlobUrl) {
         var req = new XMLHttpRequest();
         req.open('GET', twitchBlobUrl, false);
+        req.overrideMimeType("text/javascript");
         req.send();
         return req.responseText.split("'")[1];
     }
     function hookWorkerFetch() {
-        console.log('hookWorkerFetch');
+        console.log('Twitch adblocker is enabled');
         var realFetch = fetch;
         fetch = async function(url, options) {
             if (typeof url === 'string') {
